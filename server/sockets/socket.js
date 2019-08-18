@@ -21,13 +21,21 @@ io.on('connection', (client) => {
 
         client.broadcast.to(user.room).emit('connectedPeople', users.getPersonByRooms(user.room));
 
+        client.broadcast.to(user.room).emit('createMessage', createMessage('Administrator', `${user.name} joined`));
+
+
         callback(users.getPersonByRooms(user.room));
     });
 
-    client.on('createMessage', (data) => {
+    client.on('createMessage', (data, callback) => {
         let person = users.getPerson(client.id);
         let message = createMessage(person.name, data.message);
+
         client.broadcast.to(person.room).emit('createMessage', message);
+
+       
+        callback(message);
+
     });
     
 
